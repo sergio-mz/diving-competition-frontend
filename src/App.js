@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import CompetitionList from './components/Competition/CompetitionList';
+import CompetitionList from './components/Competition/CompetitionList.jsx';
 import CompetitionFormModal from './components/Competition/CompetitionFormModal.jsx';
-import CompetitionDetailModal from './components/Competition/CompetitionDetailModal';
+import CompetitionDetailModal from './components/Competition/CompetitionDetailModal.jsx';
+import JudgesList from './components/Judge/JudgesList.jsx';
+import Sidebar from './components/Sidebar/Sidebar.jsx'; // Asegúrate de ajustar la ruta según tu estructura de carpetas
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 
@@ -35,27 +37,34 @@ function App() {
 
     return (
         <Router>
-            <div className="container">
-                <Routes>
-                    <Route path="/" element={<CompetitionList competitions={competitions} onShowForm={handleShowFormModal} onShowDetail={handleShowDetailModal} refreshCompetitions={refreshCompetitions} />} />
-                </Routes>
+            <div className="d-flex">
+                <Sidebar />
+                <div className="flex-grow-1 p-3">
+                    <Routes>
+                        <Route path="/" element={<CompetitionList competitions={competitions} onShowForm={handleShowFormModal} onShowDetail={handleShowDetailModal} refreshCompetitions={refreshCompetitions} />} />
+                        <Route path="/judges" element={<JudgesList />} />
+                        {/* Añade las rutas para clavadistas, clavados */}
+                        {/* <Route path="/divers" element={<DiversList />} /> */}
+                        {/* <Route path="/dives" element={<DivesList />} /> */}
+                    </Routes>
 
-                {showFormModal && (
-                    <CompetitionFormModal
-                        showModal={showFormModal}
-                        handleClose={handleCloseModal}
-                        competitionId={currentCompetitionId}
-                        refreshCompetitions={refreshCompetitions}
-                    />
-                )}
+                    {showFormModal && (
+                        <CompetitionFormModal
+                            showModal={showFormModal}
+                            handleClose={handleCloseModal}
+                            competitionId={currentCompetitionId}
+                            refreshCompetitions={refreshCompetitions}
+                        />
+                    )}
 
-                {showDetailModal && (
-                    <CompetitionDetailModal
-                        showModal={showDetailModal}
-                        handleClose={handleCloseModal}
-                        competitionId={currentCompetitionId}
-                    />
-                )}
+                    {showDetailModal && (
+                        <CompetitionDetailModal
+                            showModal={showDetailModal}
+                            handleClose={handleCloseModal}
+                            competitionId={currentCompetitionId}
+                        />
+                    )}
+                </div>
             </div>
         </Router>
     );
