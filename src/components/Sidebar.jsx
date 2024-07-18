@@ -1,12 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Sidebar.css'; // Asegúrate de crear este archivo CSS para estilos personalizados
 
 const Sidebar = () => {
     return (
-        <div className="d-flex flex-column vh-100 sidebar bg-light">
-            <h4 className="p-3">Menú</h4>
+        <div className="d-flex flex-column bg-light" style={{ width: '250px', height: '100vh' }}>
+            <h2 className="p-3">Menú</h2>
             <ul className="nav flex-column">
                 <li className="nav-item">
                     <Link to="/" className="nav-link">Competencias</Link>

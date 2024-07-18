@@ -1,26 +1,31 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import CompetitionList from './components/Competition/CompetitionList.jsx';
+import CompetitionList from './components/Competition/CompetitionList';
 import CompetitionFormModal from './components/Competition/CompetitionFormModal.jsx';
-import CompetitionDetailModal from './components/Competition/CompetitionDetailModal.jsx';
-import JudgesList from './components/Judge/JudgesList.jsx';
-import Sidebar from './components/Sidebar/Sidebar.jsx'; // Asegúrate de ajustar la ruta según tu estructura de carpetas
+import CompetitionDetailModal from './components/Competition/CompetitionDetailModal';
+import JudgeList from './components/Judge/JudgeList';
+import JudgeFormModal from './components/Judge/JudgeFormModal.jsx';
+import JudgeDetailModal from './components/Judge/JudgeDetailModal';
+import Sidebar from './components/Sidebar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 
 function App() {
     const [showFormModal, setShowFormModal] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
-    const [currentCompetitionId, setCurrentCompetitionId] = useState(null);
-    const [competitions, setCompetitions] = useState([]);
+    const [currentId, setCurrentId] = useState(null);
+    const [type, setType] = useState(null);
+    const [data, setData] = useState({ competitions: [], judges: [] });
 
-    const handleShowFormModal = (competitionId = null) => {
-        setCurrentCompetitionId(competitionId);
+    const handleShowFormModal = (id = null, type) => {
+        setCurrentId(id);
+        setType(type);
         setShowFormModal(true);
     };
 
-    const handleShowDetailModal = (competitionId) => {
-        setCurrentCompetitionId(competitionId);
+    const handleShowDetailModal = (id, type) => {
+        setCurrentId(id);
+        setType(type);
         setShowDetailModal(true);
     };
 
@@ -29,10 +34,10 @@ function App() {
         setShowDetailModal(false);
     };
 
-    const refreshCompetitions = () => {
-        axios.get('https://localhost:7071/api/Competition')
-            .then(response => setCompetitions(response.data))
-            .catch(error => console.error('Error fetching competitions:', error));
+    const refreshData = (endpoint, key) => {
+        axios.get(`https://localhost:7071/api/${endpoint}`)
+            .then(response => setData(prevState => ({ ...prevState, [key]: response.data })))
+            .catch(error => console.error(`Error fetching ${key}:`, error));
     };
 
     return (
@@ -41,29 +46,46 @@ function App() {
                 <Sidebar />
                 <div className="flex-grow-1 p-3">
                     <Routes>
-                        <Route path="/" element={<CompetitionList competitions={competitions} onShowForm={handleShowFormModal} onShowDetail={handleShowDetailModal} refreshCompetitions={refreshCompetitions} />} />
-                        <Route path="/judges" element={<JudgesList />} />
+                    <Route path="/" element={<CompetitionList data={data.competitions} onShowForm={handleShowFormModal} onShowDetail={handleShowDetailModal} refreshData={() => refreshData('Competition', 'competitions')} />} />
+                    <Route path="/judges" element={<JudgeList data={data.judges} onShowForm={handleShowFormModal} onShowDetail={handleShowDetailModal} refreshData={() => refreshData('Judge', 'judges')} />} />
                         {/* Añade las rutas para clavadistas, clavados */}
                         {/* <Route path="/divers" element={<DiversList />} /> */}
                         {/* <Route path="/dives" element={<DivesList />} /> */}
                     </Routes>
 
-                    {showFormModal && (
-                        <CompetitionFormModal
-                            showModal={showFormModal}
-                            handleClose={handleCloseModal}
-                            competitionId={currentCompetitionId}
-                            refreshCompetitions={refreshCompetitions}
-                        />
-                    )}
+                    {showFormModal && type === 'competition' && (
+                    <CompetitionFormModal
+                        showModal={showFormModal}
+                        handleClose={handleCloseModal}
+                        id={currentId}
+                        refreshData={() => refreshData('Competition', 'competitions')}
+                    />
+                )}
 
-                    {showDetailModal && (
-                        <CompetitionDetailModal
-                            showModal={showDetailModal}
-                            handleClose={handleCloseModal}
-                            competitionId={currentCompetitionId}
-                        />
-                    )}
+                {showFormModal && type === 'judge' && (
+                    <JudgeFormModal
+                        showModal={showFormModal}
+                        handleClose={handleCloseModal}
+                        id={currentId}
+                        refreshData={() => refreshData('Judge', 'judges')}
+                    />
+                )}
+
+                {showDetailModal && type === 'competition' && (
+                    <CompetitionDetailModal
+                        showModal={showDetailModal}
+                        handleClose={handleCloseModal}
+                        id={currentId}
+                    />
+                )}
+
+                {showDetailModal && type === 'judge' && (
+                    <JudgeDetailModal
+                        showModal={showDetailModal}
+                        handleClose={handleCloseModal}
+                        id={currentId}
+                    />
+                )}
                 </div>
             </div>
         </Router>

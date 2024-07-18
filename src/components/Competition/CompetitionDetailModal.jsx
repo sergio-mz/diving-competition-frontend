@@ -3,16 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import axios from 'axios';
 
-const CompetitionDetailModal = ({ showModal, handleClose, competitionId }) => {
+const CompetitionDetailModal = ({ showModal, handleClose, id }) => {
     const [competition, setCompetition] = useState(null);
 
     useEffect(() => {
-        if (competitionId) {
-            axios.get(`https://localhost:7071/api/Competition/${competitionId}`)
+        if (id) {
+            axios.get(`https://localhost:7071/api/Competition/${id}`)
                 .then(response => setCompetition(response.data))
                 .catch(error => console.error('Error fetching competition details:', error));
         }
-    }, [competitionId]);
+    }, [id]);
 
     if (!competition) {
         return <div>Loading...</div>;
