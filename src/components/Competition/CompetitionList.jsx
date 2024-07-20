@@ -1,7 +1,7 @@
 // components/Competition/CompetitionList.js
 import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-import { fetchData, deleteData } from '../../helpers/api';
+import { deleteData } from '../../helpers/api';
 
 const CompetitionList = ({ data, onShowForm, onShowDetail, refreshData }) => {
     useEffect(() => {
